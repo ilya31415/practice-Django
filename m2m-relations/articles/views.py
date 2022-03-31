@@ -8,6 +8,11 @@ def articles_list(request):
     object_list = Article.objects.all()
     context = {'object_list': object_list}
 
+    for i in object_list:
+        print(i)
+        for q in i.scopes.all():
+            print(q.is_main, )
+
     # используйте этот параметр для упорядочивания результатов
     # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.order_by
     ordering = '-published_at'
