@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from measurement.models import Sensor, Measurement
-from measurement.serializers import SensorSerializer, MeasurementSerializer
+from measurement.serializers import SensorSerializer, MeasurementSerializer, FullInfoSensor
 
 
 class SensorView(APIView):
@@ -36,11 +36,11 @@ class MeasurementView(APIView):
             return Response({'post': 'невалидные данные'})
 
 
-class SensorRetrieve(RetrieveAPIView):
-    queryset = Sensor.objects.all()
-    serializer_class = SensorSerializer
-
-
 class SensorChange(RetrieveUpdateAPIView):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
+
+
+class SensorRetrieve(RetrieveAPIView):
+    queryset = Measurement.objects.all()
+    serializer_class = FullInfoSensor
