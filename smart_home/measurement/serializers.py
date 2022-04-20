@@ -20,3 +20,12 @@ class MeasurementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Measurement
         fields = ['sensor', 'temperature', 'data_measurement']
+
+
+
+class FullInfoSensor(serializers.ModelSerializer):
+    sensor = SensorSerializer()
+
+    class Meta:
+        model = Measurement
+        fields = ['sensor',  'temperature', 'data_measurement']
