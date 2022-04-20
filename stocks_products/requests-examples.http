@@ -1,6 +1,6 @@
 # примеры API-запросов
 
-@baseUrl = http://localhost:8000/api/v1
+
 
 # создание продукта
 POST {{baseUrl}}/products/
@@ -40,7 +40,14 @@ GET {{baseUrl}}/products/?search=помидор
 Content-Type: application/json
 
 ###
+GET {{baseUrl}}/stocks/
+Content-Type: application/json
 
+###
+DELETE {{baseUrl}}/stocks//
+Content-Type: application/json
+
+###
 # создание склада
 POST {{baseUrl}}/stocks/
 Content-Type: application/json
