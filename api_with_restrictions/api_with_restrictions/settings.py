@@ -88,10 +88,10 @@ WSGI_APPLICATION = 'api_with_restrictions.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'nnet123',
         'HOST': 'localhost',
         'PORT': '5432',
-        'USER': 'postgres',
+        'USER': 'net123',
         'PASSWORD': '1234'
     }
 }
