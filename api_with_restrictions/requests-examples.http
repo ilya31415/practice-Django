@@ -47,3 +47,8 @@ GET {{baseUrl}}/advertisements/?created_at_after=2022-04-23+14:00&created_at_bef
 Content-Type: application/json
 
 
+###
+# фильтрация по статусу
+GET {{baseUrl}}/advertisements/?status=OPEN
+Content-Type: application/json
+

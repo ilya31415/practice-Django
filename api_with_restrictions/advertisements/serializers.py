@@ -28,12 +28,6 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Метод для создания"""
 
-        # Простановка значения поля создатель по-умолчанию.
-        # Текущий пользователь является создателем объявления
-        # изменить или переопределить его через API нельзя.
-        # обратите внимание на `context` – он выставляется автоматически
-        # через методы ViewSet.
-        # само поле при этом объявляется как `read_only=True`
         validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
 
@@ -46,7 +40,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
                 raise ValidationError('слишком много открыто объявлений')
 
         if self.context['request'].method == 'PATCH':
-            if len(list_satus_open) >= 10 and attrs['status'] in 'OPEN':
+            if len(list_satus_open) >= 10 and attrs.get('status') == 'OPEN':
                 raise ValidationError('открыто слишком много объявлений')
 
         # TODO: добавьте требуемую валидацию
