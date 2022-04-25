@@ -33,14 +33,14 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
 
-        list_satus_open = Advertisement.objects.filter(status='OPEN', creator=self.context["request"].user)
+        list_satus_open = Advertisement.objects.filter(status='OPEN', creator=self.context["request"].user).count()
 
         if self.context['request'].method == 'POST':
-            if len(list_satus_open) >= 10:
+            if list_satus_open >= 10:
                 raise ValidationError('слишком много открыто объявлений')
 
         if self.context['request'].method == 'PATCH':
-            if len(list_satus_open) >= 10 and attrs.get('status') == 'OPEN':
+            if list_satus_open >= 10 and attrs.get('status') == 'OPEN':
                 raise ValidationError('открыто слишком много объявлений')
 
         # TODO: добавьте требуемую валидацию
