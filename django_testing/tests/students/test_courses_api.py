@@ -9,6 +9,7 @@ def client():
     return APIClient()
 
 
+
 @pytest.fixture
 def student_factory():
     def factory(*args, **kwargs):
@@ -52,6 +53,7 @@ def test_api_many_course(client, course_factory):
     for index, obj_cours in enumerate(data):
         assert obj_cours['name'] == course[index].name
 
+
 @pytest.mark.django_db
 def test_api_course_filter_id(client, course_factory):
     # arrange
@@ -66,6 +68,7 @@ def test_api_course_filter_id(client, course_factory):
     data = response.json()
     assert data[0]['id'] == id_course
 
+
 @pytest.mark.django_db
 def test_api_course_filter_name(client, course_factory):
     # arrange
@@ -78,6 +81,7 @@ def test_api_course_filter_name(client, course_factory):
     data = response.json()
     assert data[0]['name'] == name_course
 
+
 @pytest.mark.django_db
 def test_api_create_course(client, course_factory):
     # arrange
@@ -86,7 +90,8 @@ def test_api_create_course(client, course_factory):
     response = client.post('/api/v1/courses/', data={'name': 'Python-developer'})
     # assert
     assert response.status_code == 201
-    assert count +1 == Course.objects.count()
+    assert count + 1 == Course.objects.count()
+
 
 @pytest.mark.django_db
 def test_api_update_course(client, course_factory):
@@ -102,6 +107,7 @@ def test_api_update_course(client, course_factory):
     actual_name = Course.objects.all()[0].name
     assert actual_name == new_name
 
+
 @pytest.mark.django_db
 def test_api_delete_course(client, course_factory):
     # arrange
@@ -116,3 +122,29 @@ def test_api_delete_course(client, course_factory):
     assert response.status_code == 204
 
     assert count - 1 == Course.objects.count()
+
+
+@pytest.mark.django_db
+def test_api_create_students(client, student_factory):
+    # arrange
+    students = student_factory(_quantity=20)
+    count = Student.objects.all().count()
+    # act
+    response = client.post(f'/api/v1/students/', data={'name': 'Poll'})
+    # assert
+    assert response.status_code == 400
+    assert count == Student.objects.all().count()
+
+
+@pytest.mark.parametrize('real_db, create_obj', [(18, 2), pytest.param(18, 3, marks=pytest.mark.xfail)])
+def test_api_create_students_on_settings(create_obj, real_db,  settings):
+    max_count_db = settings.MAX_STUDENTS_PER_COURSE
+
+    count_db = 'Нормально количество студентов на курсе'
+    if create_obj + real_db > max_count_db:
+        count_db = 'привышено максимальное число студентов'
+
+
+    assert count_db == 'Нормально количество студентов на курсе'
+
+
