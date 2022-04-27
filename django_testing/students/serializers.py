@@ -12,8 +12,11 @@ class  StudentsSerializer(serializers.ModelSerializer):
         model = Student
         fields = ("birth_date", "name")
 
+    def count_all_objects_class(self):
+        return Student.objects.all().count()
+
     def validate(self, attrs):
-        len_course = Student.objects.all().count()
+        len_course = self.count_all_objects_class()
         if self.context['request'].method == 'POST':
             if len_course >= MAX_STUDENTS_PER_COURSE:
                 raise ValidationError('превышено числи студентов на курсе')

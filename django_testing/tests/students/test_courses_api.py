@@ -2,6 +2,7 @@ from rest_framework.test import APIClient
 import pytest
 from model_bakery import baker
 from students.models import Student, Course
+from students.serializers import StudentsSerializer
 
 
 @pytest.fixture
@@ -9,6 +10,13 @@ def client():
     return APIClient()
 
 
+@pytest.fixture()
+def method_post():
+    class Request():
+        def __init__(self):
+            self.method = 'POST'
+
+    return Request()
 
 @pytest.fixture
 def student_factory():
@@ -30,13 +38,16 @@ def course_factory():
 def test_api_one_course(client, course_factory):
     # arrange
     course = course_factory(_quantity=1)
+    course_id = course[0].id
+
     # act
-    response = client.get('/api/v1/courses/')
+    response = client.get(f'/api/v1/courses/{course_id}/')
     # assert
 
     assert response.status_code == 200
     data = response.json()
-    assert data[0]['name'] == course[0].name
+
+    assert data['name'] == course[0].name
 
 
 @pytest.mark.django_db
@@ -136,15 +147,17 @@ def test_api_create_students(client, student_factory):
     assert count == Student.objects.all().count()
 
 
-@pytest.mark.parametrize('real_db, create_obj', [(18, 2), pytest.param(18, 3, marks=pytest.mark.xfail)])
-def test_api_create_students_on_settings(create_obj, real_db,  settings):
-    max_count_db = settings.MAX_STUDENTS_PER_COURSE
-
-    count_db = 'Нормально количество студентов на курсе'
-    if create_obj + real_db > max_count_db:
-        count_db = 'привышено максимальное число студентов'
 
 
-    assert count_db == 'Нормально количество студентов на курсе'
 
+@pytest.mark.parametrize('real_db, result', [(19, True), (20, False)])
+def test_api_create_students_on_settings(result, real_db, method_post, monkeypatch):
 
+    def mock_len_course(*args, **kwargs):
+        return real_db
+
+    monkeypatch.setattr('students.serializers.StudentsSerializer.count_all_objects_class',  mock_len_course)
+
+    serializ = StudentsSerializer(data={'name': 'Poll'}, context={'request': method_post})
+
+    assert serializ.is_valid() == result
