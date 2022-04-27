@@ -19,7 +19,7 @@ class  StudentsSerializer(serializers.ModelSerializer):
         len_course = self.count_all_objects_class()
         if self.context['request'].method == 'POST':
             if len_course >= MAX_STUDENTS_PER_COURSE:
-                raise ValidationError('превышено числи студентов на курсе')
+                raise ValidationError('Превышено количество студентов на курсе')
 
         return attrs
 
