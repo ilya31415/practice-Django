@@ -1,0 +1,22 @@
+
+POST http://127.0.0.1:8000/api/v1/courses/
+Content-Type: application/json
+
+{
+  "name": "pp",
+  "students":[ {
+    "name": "1"
+  },{
+    "name": "1"
+  }
+  ]
+}
+
+###
+POST http://127.0.0.1:8000/api/v1/students/
+Content-Type: application/json
+
+{
+  "name": "Вася"
+
+}

@@ -12,24 +12,37 @@ class  StudentsSerializer(serializers.ModelSerializer):
         model = Student
         fields = ("birth_date", "name")
 
-    def count_all_objects_class(self):
-        return Student.objects.all().count()
 
-    def validate(self, attrs):
-        len_course = self.count_all_objects_class()
-        if self.context['request'].method == 'POST':
-            if len_course >= MAX_STUDENTS_PER_COURSE:
-                raise ValidationError('Превышено количество студентов на курсе')
 
-        return attrs
+
 
 class CourseSerializer(serializers.ModelSerializer):
-    students = StudentsSerializer(read_only=True)
+    students = StudentsSerializer(many=True)
 
     class Meta:
         model = Course
         fields = ("id", "name", "students")
-        read_onle_fields = ("students")
 
 
+    #
+
+    def create(self, validated_data):
+        students = validated_data.pop('students')
+        сourse = Course.objects.create(**validated_data)
+        for student in students:
+            сourse.students.create(**student)
+        return сourse
+
+    def len_student_course(self, students):
+        return len(students)
+
+
+    def validate_students(self, students):
+        len_objects_student_in_course = self.len_student_course()
+
+        if self.context['request'].method == 'POST':
+            if len_objects_student_in_course >= MAX_STUDENTS_PER_COURSE:
+                raise ValidationError('Превышено количество студентов на курсе')
+
+        return students
 

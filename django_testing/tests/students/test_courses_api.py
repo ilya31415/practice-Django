@@ -2,7 +2,7 @@ from rest_framework.test import APIClient
 import pytest
 from model_bakery import baker
 from students.models import Student, Course
-from students.serializers import StudentsSerializer
+from students.serializers import StudentsSerializer, CourseSerializer
 
 
 @pytest.fixture
@@ -156,8 +156,9 @@ def test_api_create_students_on_settings(result, real_db, method_post, monkeypat
     def mock_len_course(*args, **kwargs):
         return real_db
 
-    monkeypatch.setattr('students.serializers.StudentsSerializer.count_all_objects_class',  mock_len_course)
+    monkeypatch.setattr('students.serializers.CourseSerializer.len_student_course',   mock_len_course)
 
-    serializ = StudentsSerializer(data={'name': 'Poll'}, context={'request': method_post})
+    serializ = CourseSerializer(data={'name': 'Django',
+                                      'students': [{'name': 'Poll'}]}, context={'request': method_post})
 
     assert serializ.is_valid() == result
